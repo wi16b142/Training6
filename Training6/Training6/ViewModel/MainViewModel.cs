@@ -1,6 +1,7 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using System.Collections.ObjectModel;
+using System.Threading;
 using Training6.Com;
 
 namespace Training6.ViewModel
@@ -54,12 +55,12 @@ namespace Training6.ViewModel
                 else
                 {
                     foreach(var item in Data)
-                                    {
-                                        if (item.IdType.Equals(selectedFilter))
-                                        {
-                                            Persons.Add(item);
-                                        }
-                                    }
+                    {
+                        if (item.IdType.Equals(selectedFilter))
+                        {
+                            Persons.Add(item);
+                        }
+                    }
                 }
                 
             }
@@ -75,9 +76,6 @@ namespace Training6.ViewModel
 
         public MainViewModel()
         {
-            CreateData(); //create original demo data
-            Persons = new ObservableCollection<DataVM>(Data); //copy data in current displayed persons
-
             ServerBtnClick = new RelayCommand(()=> 
             {
                 com = new Communication(GuiUpdate, NewClient, true);
@@ -91,6 +89,8 @@ namespace Training6.ViewModel
             {
                 com = new Communication(GuiUpdate, NewClient, false);
                 isConnected = true;
+                Data = new ObservableCollection<DataVM>();
+                Persons = new ObservableCollection<DataVM>(Data);
             }, () => { return !isConnected; });
 
 
@@ -121,7 +121,8 @@ namespace Training6.ViewModel
                 {
                     Data.Add(new DataVM(newData[0], newData[1], int.Parse(newData[2]), newData[3], newData[4], int.Parse(newData[5]), ApplyChanges));
                 }
-                
+
+                Persons = new ObservableCollection<DataVM>(Data);
             });
 
 
@@ -130,9 +131,10 @@ namespace Training6.ViewModel
 
         private void NewClient()
         {
-            foreach(var item in Persons)
+            foreach(var item in Data)
             {
                 ApplyChanges(item);
+                Thread.Sleep(50);
             }
         }
 

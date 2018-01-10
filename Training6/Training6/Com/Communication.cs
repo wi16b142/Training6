@@ -48,8 +48,12 @@ namespace Training6.Com
 
         private void Accept()
         {
-            Clients.Add(new ClientHandler(serverSocket.Accept(), informer));
-            NewClientInformer();
+            while(true)
+            {
+                Clients.Add(new ClientHandler(serverSocket.Accept(), informer));
+                NewClientInformer(); //needed because every new client must be updated at the beginning of the session
+            }
+            
         }
 
         public void Broadcast(string data)
